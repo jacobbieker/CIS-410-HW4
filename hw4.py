@@ -8,6 +8,7 @@ __author__ = 'jacob'
 import sys
 import tokenize
 
+
 #
 # FACTOR CLASS -- EDIT HERE!
 #
@@ -21,7 +22,7 @@ class Factor(dict):
         # TODO -- PUT YOUR MULTIPLICATION CODE HERE!
         # BEGIN PLACEHOLDER CODE -- DELETE THIS!
         new_scope = self.scope
-        new_vals  = self.vals
+        new_vals = self.vals
         # END PLACEHOLDER CODE
         return Factor(new_scope, new_vals)
 
@@ -41,23 +42,28 @@ class Factor(dict):
 curr_token = 0
 token_buf = []
 
+
 def read_tokens():
     global token_buf
     for line in sys.stdin:
         token_buf.extend(line.strip().split())
-        #print "Num tokens:",len(token_buf)
+        # print "Num tokens:",len(token_buf)
+
 
 def next_token():
     global curr_token
     global token_buf
     curr_token += 1
-    return token_buf[curr_token-1]
+    return token_buf[curr_token - 1]
+
 
 def next_int():
     return int(next_token())
 
+
 def next_float():
     return float(next_token())
+
 
 def read_model():
     # Read in all tokens and throw away the first (expected to be "MARKOV")
@@ -80,11 +86,11 @@ def read_model():
         factor_vals.append([next_float() for i in range(next_int())])
 
     # DEBUG
-    #print "Num vars: ",num_vars
-    #print "Ranges: ",var_ranges
-    #print "Scopes: ",factor_scopes
-    #print "Values: ",factor_vals
-    return [Factor(s,v) for (s,v) in zip(factor_scopes,factor_vals)]
+    # print "Num vars: ",num_vars
+    # print "Ranges: ",var_ranges
+    # print "Scopes: ",factor_scopes
+    # print "Values: ",factor_vals
+    return [Factor(s, v) for (s, v) in zip(factor_scopes, factor_vals)]
 
 
 #
@@ -96,7 +102,8 @@ def main():
     # Compute Z by brute force
     f = reduce(Factor.__mul__, factors)
     z = sum(f.vals)
-    print "Z = ",z
+    print("Z = ", z)
     return
+
 
 main()
