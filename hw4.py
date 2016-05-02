@@ -20,11 +20,14 @@ class Factor(dict):
         self.ranges = range_
 
     def __mul__(self, other):
-        # TODO -- PUT YOUR MULTIPLICATION CODE HERE!
+
         # BEGIN PLACEHOLDER CODE -- DELETE THIS!
         new_scope = self.scope
         new_vals = self.vals
         new_range = self.ranges
+        print "Factor Scope: ", new_scope
+        print "Factor val: ", new_vals
+        print "Factor range: ", new_range
         # END PLACEHOLDER CODE
         return Factor(new_scope, new_vals, new_range)
 
@@ -75,9 +78,12 @@ def read_model():
     # Get number of vars, followed by their ranges
     num_vars = next_int()
     var_ranges = [next_int() for i in range(num_vars)]
-
     # Get number and scopes of factors
     num_factors = int(next_token())
+    ranges_list = []
+    for i in range(num_factors):
+        ranges_list.append(var_ranges)
+
     factor_scopes = []
     for i in range(num_factors):
         factor_scopes.append([next_int() for i in range(next_int())])
@@ -89,10 +95,11 @@ def read_model():
 
     # DEBUG
     print "Num vars: ",num_vars
-    print "Ranges: ",var_ranges
+    print "Ranges: ",ranges_list
     print "Scopes: ",factor_scopes
     print "Values: ",factor_vals
-    return [Factor(s, v, r) for (s, v, r) in zip(factor_scopes, factor_vals, var_ranges)]
+    print "Factor zip", zip(factor_scopes, factor_vals, var_ranges)
+    return [Factor(s, v, r) for (s, v, r) in zip(factor_scopes, factor_vals, ranges_list)]
 
 
 #
@@ -101,6 +108,7 @@ def read_model():
 
 def main():
     factors = read_model()
+    print factors
     # Compute Z by brute force
     f = reduce(Factor.__mul__, factors)
     z = sum(f.vals)
