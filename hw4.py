@@ -22,12 +22,17 @@ class Factor(dict):
     def __mul__(self, other):
 
         # BEGIN PLACEHOLDER CODE -- DELETE THIS!
-        new_scope = self.scope
-        new_vals = self.vals
+        new_vals = []
+        for value in self.vals:
+            for value2 in other.vals:
+                new_vals.append(value * value2)
+        new_scope = self.scope + other.scope
         new_range = self.ranges
         print "Factor Scope: ", new_scope
         print "Factor val: ", new_vals
         print "Factor range: ", new_range
+
+        # Go through table and multiply
         # END PLACEHOLDER CODE
         return Factor(new_scope, new_vals, new_range)
 
