@@ -20,20 +20,24 @@ class Factor(dict):
         self.ranges = range_
 
     def __mul__(self, other):
+        print "Other scope:", other.scope
+        print "Other Ranges:", other.ranges
+        lengths_scopes = []
+        for index, value in enumerate(other.scope):
+            lengths_scopes.append(value * other.ranges[index])
+        print "lengths_scopes: ", lengths_scopes
 
-        # BEGIN PLACEHOLDER CODE -- DELETE THIS!
         new_vals = []
-        for value in self.vals:
-            for value2 in other.vals:
-                new_vals.append(value * value2)
-        new_scope = self.scope + other.scope
-        new_range = self.ranges
-        print "Factor Scope: ", new_scope
-        print "Factor val: ", new_vals
-        print "Factor range: ", new_range
+        for index, value in enumerate(self.vals):
+            for index2, value2 in enumerate(other.vals):
+                new_vals.append(self.vals[index % self.ranges[index]] * value2)
 
-        # Go through table and multiply
-        # END PLACEHOLDER CODE
+        new_scope = self.scope
+        for scope in other.scope:
+            if scope not in self.scope:
+                new_scope.append(scope)
+        new_range = self.ranges
+        new_scope = new_scope.reverse()
         return Factor(new_scope, new_vals, new_range)
 
     def __rmul__(self, other):
@@ -99,11 +103,11 @@ def read_model():
         factor_vals.append([next_float() for i in range(next_int())])
 
     # DEBUG
-    print "Num vars: ",num_vars
-    print "Ranges: ",ranges_list
-    print "Scopes: ",factor_scopes
-    print "Values: ",factor_vals
-    print "Factor zip", zip(factor_scopes, factor_vals, var_ranges)
+    #print "Num vars: ",num_vars
+    #print "Ranges: ",ranges_list
+    #print "Scopes: ",factor_scopes
+    #print "Values: ",factor_vals
+    #print "Factor zip", zip(factor_scopes, factor_vals, var_ranges)
     return [Factor(s, v, r) for (s, v, r) in zip(factor_scopes, factor_vals, ranges_list)]
 
 
