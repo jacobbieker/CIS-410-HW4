@@ -14,17 +14,19 @@ import tokenize
 #
 
 class Factor(dict):
-    def __init__(self, scope_, vals_):
+    def __init__(self, scope_, vals_, range_,):
         self.scope = scope_
         self.vals = vals_
+        self.ranges = range_
 
     def __mul__(self, other):
         # TODO -- PUT YOUR MULTIPLICATION CODE HERE!
         # BEGIN PLACEHOLDER CODE -- DELETE THIS!
         new_scope = self.scope
         new_vals = self.vals
+        new_range = self.ranges
         # END PLACEHOLDER CODE
-        return Factor(new_scope, new_vals)
+        return Factor(new_scope, new_vals, new_range)
 
     def __rmul__(self, other):
         return self * other
@@ -86,11 +88,11 @@ def read_model():
         factor_vals.append([next_float() for i in range(next_int())])
 
     # DEBUG
-    # print "Num vars: ",num_vars
-    # print "Ranges: ",var_ranges
-    # print "Scopes: ",factor_scopes
-    # print "Values: ",factor_vals
-    return [Factor(s, v) for (s, v) in zip(factor_scopes, factor_vals)]
+    print "Num vars: ",num_vars
+    print "Ranges: ",var_ranges
+    print "Scopes: ",factor_scopes
+    print "Values: ",factor_vals
+    return [Factor(s, v, r) for (s, v, r) in zip(factor_scopes, factor_vals, var_ranges)]
 
 
 #
