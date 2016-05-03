@@ -37,13 +37,18 @@ class Factor(dict):
             assignment[l] = 0
         print assignment
 
+        new_scope = self.scope
+        for scope in other.scope:
+            if scope not in self.scope:
+                new_scope.append(scope)
+
         for i in range(len(self.ranges) * len(other.ranges) - 1):
             new_factors.append(self.vals[j] * other.vals[k])
-            # for l = 0, ..., self.scope union other.scope
+            for l in new_scope:
                 assignment[l] = assignment[l] + 1
                 if assignment[l] == self.ranges[l]:
                     assignment[l] = 0
-                    # Loops back around to top is idea, mighjt not work
+                    # Loops back around to top is idea, might not work
                     j = j - (self.ranges[l] - 1) * self.vals[l]
                     k = k - (other.ranges[l] - 1) * other.vals[l]
                 elif assignment[l] == other.ranges[l]:
@@ -51,7 +56,10 @@ class Factor(dict):
                     j = j - (self.ranges[l] - 1) * self.vals[l]
                     k = k - (other.ranges[l] - 1) * other.vals[l]
                 else:
-                    j = j + self.ranges[]
+                    j = j + self.ranges[l]
+                    k = k + self.ranges[l]
+                    break
+
 
 
         """
@@ -68,10 +76,7 @@ class Factor(dict):
                 #print value2
                 print ""
         """
-        new_scope = self.scope
-        for scope in other.scope:
-            if scope not in self.scope:
-                new_scope.append(scope)
+
 
         new_scope.reverse()
         new_vals = self.vals
