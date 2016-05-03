@@ -20,24 +20,40 @@ class Factor(dict):
         self.ranges = range_
 
     def __mul__(self, other):
-        print "Other scope:", other.scope
-        print "Other Ranges:", other.ranges
+        print
+        print "Other Scope: ", other.scope
+        print "Other Ranges: ", other.ranges
+        print "Other Vals: ", other.vals
+        print
+
+        j = 0
+        k = 0
+        assignment = {}
+        new_factors = []
+
+        """
         lengths_scopes = []
         for index, value in enumerate(other.scope):
-            lengths_scopes.append(value * other.ranges[index])
-        print "lengths_scopes: ", lengths_scopes
-
+            print index
+            print value
+            #lengths_scopes.append(value * self.ranges[index])
+        #print "lengths_scopes: ", lengths_scopes
         new_vals = []
-        for index, value in enumerate(self.vals):
+        for index, value in enumerate(other.vals):
             for index2, value2 in enumerate(other.vals):
-                new_vals.append(self.vals[index % self.ranges[index]] * value2)
-
+                #print index2
+                #print value2
+                print ""
+        """
         new_scope = self.scope
         for scope in other.scope:
             if scope not in self.scope:
                 new_scope.append(scope)
+
+        new_scope.reverse()
+        new_vals = self.vals
         new_range = self.ranges
-        new_scope = new_scope.reverse()
+        # END PLACEHOLDER CODE
         return Factor(new_scope, new_vals, new_range)
 
     def __rmul__(self, other):
