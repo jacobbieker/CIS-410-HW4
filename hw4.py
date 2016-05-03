@@ -1,8 +1,13 @@
-__author__ = 'jacob and tj'
+__author__ = 'Theodore LaGrow'
+__author__ = 'Jacob Bieker'
 # CIS 410/510pm
 # Homework #4
 # Daniel Lowd
 # April 2016
+#
+# Worked with Robert Marcy on the implimentation of the alogithm and logic behind __mult__
+#
+#
 #
 # TEMPLATE CODE
 import sys
@@ -22,35 +27,24 @@ class Factor(dict):
 
 
     def stride(self, l):
-        
+        """ Used to calculate the stride of each variable """
         if l not in self.scope:
             return 0
         s = 1
-        self.scope.reverse()
-        for i in range(self.scope):
+        self.scope.reverse() # Needs to reverse the elements to iterate cleaner
+        for i in self.scope:
             if (i == l):
-                self.scope.reverse()
+                self.scope.reverse() # Reverse back
                 return s
-            s *= self.range[i]
+            s *= self.ranges[i]
         
-        print "stride: ", s
+        #print "stride: ", s  # Used for testing code
 
 
 
 
     def __mul__(self, other):
-        #print
-        #print "Self Scope: ", self.scope
-        #print "Self Ranges: ", self.ranges
-        #print "Self Vals: ", self.vals
-        #print
-        #print "Other Scope: ", other.scope
-        #print "Other Ranges: ", other.ranges
-        #print "Other Vals: ", other.vals
-
         
-        
-        #print "first self.scope:   ", self.scope
 
         new_scope = []
         for t in self.scope:
@@ -58,81 +52,77 @@ class Factor(dict):
         for s in other.scope:
             if s not in self.scope:
                 new_scope.append(s)
-        #print "new_scope", new_scope
-        
-
-        #print "second self.scope:   ", self.scope
+        print "new_scope", new_scope
 
 
         new_ranges = {}
         for i in new_scope:
             #print i #
             #print "self.scope: ", self.scope #
-            try:
-                if (i in self.scope):
+            if (i in self.scope):
                 
-                    print "self.ranges: ", self.ranges #          
-                    #print i #
-                    new_ranges[i] = self.ranges[i]
-                elif (i in other.scope):
-                    #print i #
-                    new_ranges[i] = other.ranges[i]
-            except KeyError:
-                print "Raised error: ", i
+                print "self.ranges: ", self.ranges #          
+                #print i #
+                new_ranges[i] = self.ranges[i]
+            elif (i in other.scope):
+                #print i #
+                new_ranges[i] = other.ranges[i]
 
-        #print "new_range: ", new_ranges
+
+        print "new_range: ", new_ranges
 
         
 
 
         x1Ux2_scope = len(new_scope)
-        #print "x1Ux2_scope", x1Ux2_scope
+        print "x1Ux2_scope", x1Ux2_scope
 
         x1Ux2_cardinality_values = 1
         for key in new_ranges:
             x1Ux2_cardinality_values *= new_ranges[key]
-        #print "x1Ux2_cardinality_values", x1Ux2_cardinality_values
+        print "x1Ux2_cardinality_values", x1Ux2_cardinality_values
 
 
         j, k = 0, 0 # Line 1
-        assignment = {}
+        assignment = []
         psi_values = []
 
 
         for l in range(x1Ux2_scope): # Line 2
-            assignment[l] = 0 # Line 3
+            assignment.append(0) # Line 3
         
-            for i in range(x1Ux2_cardinality_values - 1): # Line 4
-                psi_values.append(self.vals[j] * other.vals[k]) # Line 5
+        for i in range(x1Ux2_cardinality_values - 1): # Line 4
+            psi_values.append(self.vals[j] * other.vals[k]) # Line 5
                 
-                for l in x1Ux2_scope: # Line 6 (modified from the actual algoithem)
-                    assignment[new_scope.index[l]] += 1 # Line 7
 
-                    if assignment[new_scope.index[l]] == new_ranges[l]: # Line 8
-                        assignment[new_scope.index[l]] = 0 # Line 9
+            for l in new_scope: # Line 6 (modified from the actual algoithem)
                     
-                        j = j - (new_ranges[l] - 1) * self.stride[self, l] # Line 10
-                        k = k - (new_ranges[l] - 1) * other.stride[other, l] # Line 11
+                assignment[new_scope.index(l)] += 1  # Line 7
+
+                if assignment[new_scope.index(l)] == new_ranges[l]: # Line 8
+                    assignment[new_scope.index(l)] = 0 # Line 9
+                    
+                    j = j - (new_ranges[l] - 1) * Factor.stride(self, l) # Line 10
+                    k = k - (new_ranges[l] - 1) * Factor.stride(other, l) # Line 11
                 
-                    else: # Line 12
-                        j = j + self.stride[self, l] # Line 13
-                        k = k + other.stride[other, l] # Lin3 14
-                        break # Line 15
+                else: # Line 12
+                    j = j + Factor.stride(self, l) # Line 13
+                    k = k + Factor.stride(other, l) # Lin3 14
+                    break # Line 15
+
 
         #print psi_values # testing
 
-
+        psi_values.append(self.vals[j]*other.vals[k])
         new_scope.reverse()
-        new_vals = self.vals
-        new_range = self.ranges
         # END PLACEHOLDER CODE
-        return Factor(new_scope, new_vals, new_range) # Line 16
+        return Factor(new_scope, psi_values, new_ranges) # Line 16
 
 
-    def __rmul__(self, other):
+    def __rmul__(self, other): #never used
         return self * other
 
-    def __imul__(self, other):
+    def __imul__(self, other): #never used
         return self * other
 
 
@@ -219,8 +209,8 @@ def main():
         print f.ranges
         print f.scope
     # Compute Z by brute force
-    #f = reduce(Factor.__mul__, factors)
-    f = Factor.__mul__(factors[0], factors[1])
+    f = reduce(Factor.__mul__, factors)
+    #f = Factor.__mul__(factors[0], factors[1])
     print "values of f: ", f.values
     print "scope of f: ", f.scope
     z = sum(f.vals)
