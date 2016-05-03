@@ -1,4 +1,4 @@
-__author__ = 'jacob'
+__author__ = 'jacob and tj'
 # CIS 410/510pm
 # Homework #4
 # Daniel Lowd
@@ -83,36 +83,50 @@ class Factor(dict):
         print "new_range: ", new_ranges
 
         
-        j, k = 0, 0
-        assignment = {}
 
-        x1Ux2_values = []
-        x1Ux2_cardinality = []
+
+        x1Ux2_scope = len(new_scope)
+        print "x1Ux2_scope", x1Ux2_scope
+
+        x1Ux2_cardinality_values = 1
+        for key in new_ranges:
+            x1Ux2_cardinality_values *= new_ranges[key]
+        print "x1Ux2_cardinality_values", x1Ux2_cardinality_values
+
+
+        j, k = 0, 0 # Line 1
+        assignment = {}
+        psi_values = []
+
+
+        for l in range(x1Ux2_scope): # Line 2
+            assignment[l] = 0 # Line 3
         
-        for i in range(len(self.ranges) * len(other.ranges) - 1):
-            new_factors.append(self.vals[j] * other.vals[k])
-            for l in new_scope:
-                assignment[l] = assignment[l] + 1
-                if assignment[l] == self.ranges[l]:
-                    assignment[l] = 0
-                    # Loops back around to top is idea, might not work
-                    j = j - (self.ranges[l] - 1) * self.vals[l]
-                    k = k - (other.ranges[l] - 1) * other.vals[l]
-                elif assignment[l] == other.ranges[l]:
-                    assignment[l] = 0
-                    j = j - (self.ranges[l] - 1) * self.stride[self, l]
-                    k = k - (other.ranges[l] - 1) * other.vals[other, l]
-                else:
-                    j = j + self.ranges[l]
-                    k = k + self.ranges[l]
-                    break
-        
+            for i in range(x1Ux2_cardinality_values - 1): # Line 4
+                psi_values.append(self.vals[j] * other.vals[k]) # Line 5
+                
+                for l in x1Ux2_scope: # Line 6 (modified from the actual algoithem)
+                    assignment[new_scope.index[l]] += 1 # Line 7
+
+                    if assignment[new_scope.index[l]] == new_ranges[l]: # Line 8
+                        assignment[new_scope.index[l]] = 0 # Line 9
+                    
+                        j = j - (new_ranges[l] - 1) * self.stride[self, l] # Line 10
+                        k = k - (new_ranges[l] - 1) * other.stride[other, l] # Line 11
+                
+                    else: # Line 12
+                        j = j + self.stride[self, l] # Line 13
+                        k = k + other.stride[other, l] # Lin3 14
+                        break # Line 15
+
+        print psi_values # testing
+
 
         new_scope.reverse()
         new_vals = self.vals
         new_range = self.ranges
         # END PLACEHOLDER CODE
-        return Factor(new_scope, new_vals, new_range)
+        return Factor(new_scope, new_vals, new_range) # Line 16
 
 
     def __rmul__(self, other):
