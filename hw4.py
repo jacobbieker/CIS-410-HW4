@@ -39,18 +39,18 @@ class Factor(dict):
 
 
     def __mul__(self, other):
-        print
-        print "Self Scope: ", self.scope
-        print "Self Ranges: ", self.ranges
-        print "Self Vals: ", self.vals
-        print
-        print "Other Scope: ", other.scope
-        print "Other Ranges: ", other.ranges
-        print "Other Vals: ", other.vals
+        #print
+        #print "Self Scope: ", self.scope
+        #print "Self Ranges: ", self.ranges
+        #print "Self Vals: ", self.vals
+        #print
+        #print "Other Scope: ", other.scope
+        #print "Other Ranges: ", other.ranges
+        #print "Other Vals: ", other.vals
 
         
         
-        print "first self.scope:   ", self.scope
+        #print "first self.scope:   ", self.scope
 
         new_scope = []
         for t in self.scope:
@@ -58,10 +58,10 @@ class Factor(dict):
         for s in other.scope:
             if s not in self.scope:
                 new_scope.append(s)
-        print "new_scope", new_scope
+        #print "new_scope", new_scope
         
 
-        print "second self.scope:   ", self.scope
+        #print "second self.scope:   ", self.scope
 
 
         new_ranges = {}
@@ -80,18 +80,18 @@ class Factor(dict):
             except KeyError:
                 print "Raised error: ", i
 
-        print "new_range: ", new_ranges
+        #print "new_range: ", new_ranges
 
         
 
 
         x1Ux2_scope = len(new_scope)
-        print "x1Ux2_scope", x1Ux2_scope
+        #print "x1Ux2_scope", x1Ux2_scope
 
         x1Ux2_cardinality_values = 1
         for key in new_ranges:
             x1Ux2_cardinality_values *= new_ranges[key]
-        print "x1Ux2_cardinality_values", x1Ux2_cardinality_values
+        #print "x1Ux2_cardinality_values", x1Ux2_cardinality_values
 
 
         j, k = 0, 0 # Line 1
@@ -119,7 +119,7 @@ class Factor(dict):
                         k = k + other.stride[other, l] # Lin3 14
                         break # Line 15
 
-        print psi_values # testing
+        #print psi_values # testing
 
 
         new_scope.reverse()
