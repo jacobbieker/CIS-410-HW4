@@ -24,27 +24,21 @@ class Factor(dict):
         self.vals = vals_
         self.ranges = range_
 
-
-
     def stride(self, l):
         """ Used to calculate the stride of each variable """
         if l not in self.scope:
             return 0
         s = 1
-        self.scope.reverse() # Needs to reverse the elements to iterate cleaner
+        self.scope.reverse()  # Needs to reverse the elements to iterate cleaner
         for i in self.scope:
             if (i == l):
-                self.scope.reverse() # Reverse back
+                self.scope.reverse()  # Reverse back
                 return s
             s *= self.ranges[i]
-        
-        #print "stride: ", s  # Used for testing code
 
-
-
+            # print("stride: ", s  # Used for testing code
 
     def __mul__(self, other):
-        
 
         new_scope = []
         for t in self.scope:
@@ -52,79 +46,69 @@ class Factor(dict):
         for s in other.scope:
             if s not in self.scope:
                 new_scope.append(s)
-        print "new_scope", new_scope
-
+        print("new_scope", new_scope)
 
         new_ranges = {}
         for i in new_scope:
-            #print i #
-            #print "self.scope: ", self.scope #
+            # print(i #
+            # print("self.scope: ", self.scope #
             if (i in self.scope):
-                
-                print "self.ranges: ", self.ranges #          
-                #print i #
+
+                print("self.ranges: ", self.ranges)  #
+                # print(i #
                 new_ranges[i] = self.ranges[i]
             elif (i in other.scope):
-                #print i #
+                # print(i #
                 new_ranges[i] = other.ranges[i]
 
-
-        print "new_range: ", new_ranges
-
-        
-
+        print("new_range: ", new_ranges)
 
         x1Ux2_scope = len(new_scope)
-        print "x1Ux2_scope", x1Ux2_scope
+        print("x1Ux2_scope", x1Ux2_scope)
 
         x1Ux2_cardinality_values = 1
         for key in new_ranges:
             x1Ux2_cardinality_values *= new_ranges[key]
-        print "x1Ux2_cardinality_values", x1Ux2_cardinality_values
+        print("x1Ux2_cardinality_values", x1Ux2_cardinality_values)
 
-
-        j, k = 0, 0 # Line 1
+        j, k = 0, 0  # Line 1
         assignment = []
         psi_values = []
 
+        for l in range(x1Ux2_scope):  # Line 2
+            assignment.append(0)  # Line 3
 
-        for l in range(x1Ux2_scope): # Line 2
-            assignment.append(0) # Line 3
-        
-        for i in range(x1Ux2_cardinality_values - 1): # Line 4
-            psi_values.append(self.vals[j] * other.vals[k]) # Line 5
-                
+        for i in range(x1Ux2_cardinality_values - 1):  # Line 4
+            psi_values.append(self.vals[j] * other.vals[k])  # Line 5
 
-            for l in new_scope: # Line 6 (modified from the actual algoithem)
-                    
+            for l in new_scope:  # Line 6 (modified from the actual algoithem)
+
                 assignment[new_scope.index(l)] += 1  # Line 7
 
-                if assignment[new_scope.index(l)] == new_ranges[l]: # Line 8
-                    assignment[new_scope.index(l)] = 0 # Line 9
-                    
-                    j = j - (new_ranges[l] - 1) * Factor.stride(self, l) # Line 10
-                    k = k - (new_ranges[l] - 1) * Factor.stride(other, l) # Line 11
-                
-                else: # Line 12
-                    j = j + Factor.stride(self, l) # Line 13
-                    k = k + Factor.stride(other, l) # Lin3 14
-                    break # Line 15
+                if assignment[new_scope.index(l)] == new_ranges[l]:  # Line 8
+                    assignment[new_scope.index(l)] = 0  # Line 9
+
+                    j = j - (new_ranges[l] - 1) * Factor.stride(self, l)  # Line 10
+                    k = k - (new_ranges[l] - 1) * Factor.stride(other, l)  # Line 11
+
+                else:  # Line 12
+                    j = j + Factor.stride(self, l)  # Line 13
+                    k = k + Factor.stride(other, l)  # Lin3 14
+                    break  # Line 15
 
 
-        #print psi_values # testing
+        # print(psi_values # testing
 
-        psi_values.append(self.vals[j]*other.vals[k])
+        psi_values.append(self.vals[j] * other.vals[k])
         new_scope.reverse()
         # END PLACEHOLDER CODE
-        return Factor(new_scope, psi_values, new_ranges) # Line 16
+        return Factor(new_scope, psi_values, new_ranges)  # Line 16
 
-
-    def __rmul__(self, other): #never used
+    def __rmul__(self, other):  # never used
         return self * other
 
-    def __imul__(self, other): #never used
+    def __imul__(self, other):  # never used
         return self * other
-
 
 
 #
@@ -141,7 +125,7 @@ def read_tokens():
     global token_buf
     for line in sys.stdin:
         token_buf.extend(line.strip().split())
-        # print "Num tokens:",len(token_buf)
+        # print("Num tokens:",len(token_buf)
 
 
 def next_token():
@@ -185,17 +169,17 @@ def read_model():
     var_dict = dict(zip(range(num_vars), var_ranges))
     factor_ranges = []
     for k in range(num_factors):
-        factor_ranges.append({j:var_dict[j] for j in factor_scopes[k]})
+        factor_ranges.append({j: var_dict[j] for j in factor_scopes[k]})
 
 
 
     # DEBUG
-    print "Num vars: ",num_vars
-    print "Ranges: ",var_ranges
-    print "var_dict: ", var_dict
-    print "factor_ranges: ", factor_ranges
-    print "Scopes: ",factor_scopes
-    print "Values: ",factor_vals
+    print("Num vars: ", num_vars)
+    print("Ranges: ", var_ranges)
+    print("var_dict: ", var_dict)
+    print("factor_ranges: ", factor_ranges)
+    print("Scopes: ", factor_scopes)
+    print("Values: ", factor_vals)
     return [Factor(s, v, r) for (s, v, r) in zip(factor_scopes, factor_vals, factor_ranges)]
 
 
@@ -206,13 +190,13 @@ def read_model():
 def main():
     factors = read_model()
     for f in factors:
-        print f.ranges
-        print f.scope
+        print(f.ranges)
+        print(f.scope)
     # Compute Z by brute force
     f = reduce(Factor.__mul__, factors)
-    #f = Factor.__mul__(factors[0], factors[1])
-    print "values of f: ", f.values
-    print "scope of f: ", f.scope
+    # f = Factor.__mul__(factors[0], factors[1])
+    print("values of f: ", f.values)
+    print("scope of f: ", f.scope)
     z = sum(f.vals)
     print("Z = ", z)
     return
