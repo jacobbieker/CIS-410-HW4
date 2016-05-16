@@ -1,18 +1,18 @@
 __author__ = 'Theodore LaGrow'
 __author__ = 'Jacob Bieker'
-# CIS 410/510pm
+# CIS 410/510
 # Homework #4
 # Daniel Lowd
 # April 2016
 #
+# Language: Python 2.7.1
+#
 # Worked with Robert Marcy on the implimentation of the alogithm and logic behind __mult__
-#
-#
 #
 # TEMPLATE CODE
 import sys
-import functools
 import tokenize
+import functools
 
 
 #
@@ -37,40 +37,45 @@ class Factor(dict):
                 return s
             s *= self.ranges[i]
 
-            # print("stride: ", s  # Used for testing code
+            # print "stride: ", s  # testing
 
     def __mul__(self, other):
+        """ Method to brute force the multiplication """
+        """ WARNING: do not try to impliment this function on alarm... """
 
         new_scope = []
-        for t in self.scope:
-            new_scope.append(t)
-        for s in other.scope:
-            if s not in self.scope:
-                new_scope.append(s)
-        print("new_scope", new_scope)
+        for scope in self.scope:
+            new_scope.append(scope)
+        for scope in other.scope:
+            if scope not in self.scope:
+                new_scope.append(scope)
+        # print "new_scope", new_scope
+
 
         new_ranges = {}
         for i in new_scope:
-            # print(i #
-            # print("self.scope: ", self.scope #
             if (i in self.scope):
-
-                print("self.ranges: ", self.ranges)  #
-                # print(i #
+                # print "self.ranges: ", self.ranges # testing
                 new_ranges[i] = self.ranges[i]
             elif (i in other.scope):
-                # print(i #
                 new_ranges[i] = other.ranges[i]
 
-        print("new_range: ", new_ranges)
+
+        # print "new_range: ", new_ranges # testing
+
+
+
 
         x1Ux2_scope = len(new_scope)
-        print("x1Ux2_scope", x1Ux2_scope)
+        # print "x1Ux2_scope", x1Ux2_scope # testing
 
         x1Ux2_cardinality_values = 1
         for key in new_ranges:
             x1Ux2_cardinality_values *= new_ranges[key]
-        print("x1Ux2_cardinality_values", x1Ux2_cardinality_values)
+        # print "x1Ux2_cardinality_values", x1Ux2_cardinality_values # testing
+
+
+        """ This is the start the implimentation of Alogithm 10.A.1 on pg. 359 """
 
         j, k = 0, 0  # Line 1
         assignment = []
@@ -98,7 +103,7 @@ class Factor(dict):
                     break  # Line 15
 
 
-        # print(psi_values # testing
+        # print psi_values # testing
 
         psi_values.append(self.vals[j] * other.vals[k])
         new_scope.reverse()
@@ -126,7 +131,7 @@ def read_tokens():
     global token_buf
     for line in sys.stdin:
         token_buf.extend(line.strip().split())
-        # print("Num tokens:",len(token_buf)
+        # print "Num tokens:",len(token_buf)
 
 
 def next_token():
@@ -164,23 +169,25 @@ def read_model():
     for i in range(num_factors):
         factor_vals.append([next_float() for i in range(next_int())])
 
-    ###########
+    ####################################################################
     # Get variable for the factor scopes
+    # This is needed to get the ranges in the correct format
 
     var_dict = dict(zip(range(num_vars), var_ranges))
     factor_ranges = []
     for k in range(num_factors):
         factor_ranges.append({j: var_dict[j] for j in factor_scopes[k]})
 
+    ####################################################################
 
 
-    # DEBUG
-    print("Num vars: ", num_vars)
-    print("Ranges: ", var_ranges)
-    print("var_dict: ", var_dict)
-    print("factor_ranges: ", factor_ranges)
-    print("Scopes: ", factor_scopes)
-    print("Values: ", factor_vals)
+    # Hella DEBUGing
+    # print "Num vars: ",num_vars
+    # print "Ranges: ",var_ranges
+    # print "var_dict: ", var_dict
+    # print "factor_ranges: ", factor_ranges
+    # print "Scopes: ",factor_scopes
+    # print "Values: ",factor_vals
     return [Factor(s, v, r) for (s, v, r) in zip(factor_scopes, factor_vals, factor_ranges)]
 
 
@@ -190,14 +197,8 @@ def read_model():
 
 def main():
     factors = read_model()
-    for f in factors:
-        print(f.ranges)
-        print(f.scope)
-    # Compute Z by brute force
-    f = functools.reduce(Factor.__mul__, factors)
-    # f = Factor.__mul__(factors[0], factors[1])
-    print("values of f: ", f.values)
-    print("scope of f: ", f.scope)
+    # Compute Z by brute force... BRUUUUTTTTEEEEEEE
+    f = functools.reduce(Factor.__mul__, factors)  # Nice function in Python! Whoot whoot!
     z = sum(f.vals)
     print("Z = ", z)
     return
