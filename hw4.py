@@ -11,6 +11,7 @@ __author__ = 'Jacob Bieker'
 #
 # TEMPLATE CODE
 import sys
+import functools
 import tokenize
 
 
@@ -193,7 +194,7 @@ def main():
         print(f.ranges)
         print(f.scope)
     # Compute Z by brute force
-    f = reduce(Factor.__mul__, factors)
+    f = functools.reduce(Factor.__mul__, factors)
     # f = Factor.__mul__(factors[0], factors[1])
     print("values of f: ", f.values)
     print("scope of f: ", f.scope)
