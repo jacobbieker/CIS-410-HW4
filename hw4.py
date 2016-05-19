@@ -130,7 +130,8 @@ def sum_out(factor, variable):
     '''
     Choose a random variable from all of the remaining variables that can be summed out
     Collect all the factors that have this random variable and multiply them together
-    Sum out the chosen random variable from the resulting factor by summing all the variations of the chosen random variable for each combination of other random variables
+    Sum out the chosen random variable from the resulting factor by summing all the variations of the chosen random
+    variable for each combination of other random variables
     Repeat
     :param factor:
     :param variable:
@@ -257,6 +258,9 @@ def read_model():
 
 def main():
     factors = read_model()
+    # loop through factors, choosing random variable to sum out and sending those factors to sum_out
+    for factor in factors:
+
     # Compute Z by brute force... BRUUUUTTTTEEEEEEE
     f = functools.reduce(Factor.__mul__, factors)  # Nice function in Python! Whoot whoot!
     z = sum(f.vals)
