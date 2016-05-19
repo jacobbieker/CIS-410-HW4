@@ -17,7 +17,7 @@ __author__ = 'Jacob Bieker'
 import sys
 import tokenize
 import functools
-
+from collections import Counter
 
 #
 # FACTOR CLASS
@@ -259,8 +259,10 @@ def read_model():
 def main():
     factors = read_model()
     # loop through factors, choosing random variable to sum out and sending those factors to sum_out
+    total_scope = []
     for factor in factors:
-
+        total_scope.append(factor.scope)
+    print(total_scope)
     # Compute Z by brute force... BRUUUUTTTTEEEEEEE
     f = functools.reduce(Factor.__mul__, factors)  # Nice function in Python! Whoot whoot!
     z = sum(f.vals)
