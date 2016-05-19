@@ -127,7 +127,7 @@ class Factor(dict):
         return self * other
 
 
-def sum_out(factors, variable):
+def sum_out(factor, variable):
     '''
     Choose a random variable from all of the remaining variables that can be summed out
     Collect all the factors that have this random variable and multiply them together
@@ -139,45 +139,45 @@ def sum_out(factors, variable):
     :return:
     '''
     debug = True
+    print(factor)
     new_factors = []
-    for factor in factors:
-        new_vals = [x for x in factor.scope if x != variable]
-        if debug: print("New Vals: ", new_vals)
+    new_vals = [x for x in factor.scope if x != variable]
+    if debug: print("New Vals: ", new_vals)
 
-        new_factor = Factor(new_vals, factor.vals, factor.ranges)
+    new_factor = Factor(new_vals, factor.vals, factor.ranges)
 
-        if len(new_vals) > 0:
-            val_index = factor.scope.index(variable)
-            if debug: print("Var Index: ", val_index)
+    if len(new_vals) > 0:
+        val_index = factor.scope.index(variable)
+        if debug: print("Var Index: ", val_index)
 
-            used_val = [False for x in range(len(factor.scope))]
+        used_val = [False for x in range(len(factor.scope))]
+
+        if debug:
+            print("used var: ", used_val)
+            print("stride: ", factor.stride(factor.scope[val_index]), ", card: ", factor.vals[val_index])
+
+        psi = []
+        for i in range(len(new_factor.scope)):
+            psi.append(0)
+
+            start = 0
+            for k in range(len(factor.scope)):
+                if used_val[k] == False:
+                    start = k
+                    break
+
+            for j in range(factor.scope[val_index]):
+                if debug:
+                    print("start: ", start, " stride: ", factor.stride(val_index), " j: ", j)
+                psi[i] += factor.vals[start + factor.stride(val_index) * j]
+                used_val[start + factor.stride(val_index) * j] = True
 
             if debug:
-                print("used var: ", used_val)
-                print("stride: ", factor.stride(factor.scope[val_index]), ", card: ", factor.vals[val_index])
+                print("psi: ", i, " ", psi[i])
 
-            psi = []
-            for i in range(len(new_factor.scope)):
-                psi.append(0)
-
-                start = 0
-                for k in range(len(factor.scope)):
-                    if used_val[k] == False:
-                        start = k
-                        break
-
-                for j in range(factor.scope[val_index]):
-                    if debug:
-                        print("start: ", start, " stride: ", factor.stride(val_index), " j: ", j)
-                    psi[i] += factor.vals[start + factor.stride(val_index) * j]
-                    used_val[start + factor.stride(val_index) * j] = True
-
-                if debug:
-                    print("psi: ", i, " ", psi[i])
-
-            new_factor.vals = psi[:]
-        #new_factors.append(new_factor)
-        return new_factors
+        new_factor.vals = psi[:]
+    #new_factors.append(new_factor)
+    return new_factor
 
 
 #
@@ -265,7 +265,7 @@ def main():
     total_scope = []
     for factor in factors:
         total_scope.append(factor.scope)
-    print(total_scope)
+    #print(total_scope)
 
     counted = Counter([item for scope in total_scope for item in scope])
     sorted_x = sorted(counted.items(), key=operator.itemgetter(1))
@@ -273,15 +273,17 @@ def main():
     for variable in sorted_x:
         variable_factors = []
         for factor in factors:
-            print("Variable 0", int(variable[0]))
-            print("Factor Scope", factor.scope)
+            #print("Variable 0", int(variable[0]))
+            #print("Factor Scope", factor.scope)
             if int(variable[0]) in factor.scope:
                 variable_factors.append(factor)
-        new_factors.append(sum_out(variable_factors, variable[0]))
+        # new_factors.append(sum_out(variable_factors, variable[0]))
 
-    f = functools.reduce(Factor.__mul__, new_factors)
+    # f = functools.reduce(Factor.__mul__, new_factors)
     # Compute Z by brute force... BRUUUUTTTTEEEEEEE
-    #f = functools.reduce(Factor.__mul__, factors)  # Nice function in Python! Whoot whoot!
+    f = functools.reduce(Factor.__mul__, factors)  # Nice function in Python! Whoot whoot!
+    for variable in sorted_x:
+        f = sum_out(f, variable[0])
     z = sum(f.vals)
     print("Z = ", z)
     return
