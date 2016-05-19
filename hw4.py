@@ -18,6 +18,7 @@ import sys
 import tokenize
 import functools
 from collections import Counter
+import operator
 
 #
 # FACTOR CLASS
@@ -126,66 +127,57 @@ class Factor(dict):
         return self * other
 
 
-def sum_out(factor, variable):
+def sum_out(factors, variable):
     '''
     Choose a random variable from all of the remaining variables that can be summed out
     Collect all the factors that have this random variable and multiply them together
     Sum out the chosen random variable from the resulting factor by summing all the variations of the chosen random
     variable for each combination of other random variables
     Repeat
-    :param factor:
+    :param factor: list of factors that contain the variable with the least values
     :param variable:
     :return:
     '''
-
-    """
-    I am not sure where you want this yet but here is the code to go through the list of lists
-
-    counted = Counter([item for sublist in my_list for item in sublist])
-
-    ---> then change my_list to the scope list of lists in the code
-
-
-    """
     debug = True
+    new_factors = []
+    for factor in factors:
+        new_vals = [x for x in factor.scope if x != variable]
+        if debug: print("New Vals: ", new_vals)
 
-    new_vals = [x for x in factor.scope if variable not in x]
-    if debug: print("New Vals: ", new_vals)
+        new_factor = Factor(new_vals, factor.vals, factor.ranges)
 
-    new_factor = Factor(new_vals, factor.vals, factor.ranges)
+        if len(new_vals) > 0:
+            val_index = factor.scope.index(variable)
+            if debug: print("Var Index: ", val_index)
 
-    if len(new_vals) > 0:
-        val_index = factor.scope.index(variable)
-        if debug: print("Var Index: ", val_index)
-
-        used_val = [False for x in range(len(factor.scope))]
-
-        if debug:
-            print("used var: ", used_val)
-            print("stride: ", factor.stride(factor.scope[val_index]), ", card: ", factor.vals[val_index])
-
-        psi = []
-        for i in range(len(new_factor.scope)):
-            psi.append(0)
-
-            start = 0
-            for k in range(len(factor.scope)):
-                if used_val[k] == False:
-                    start = k
-                    break
-
-            for j in range(len(factor.scope[val_index])):
-                if debug:
-                    print("start: ", start, " stride: ", factor.stride(val_index), " j: ", j)
-                psi[i] += factor.vals[start + factor.stride(val_index) * j]
-                used_val[start + factor.stride(val_index) * j] = True
+            used_val = [False for x in range(len(factor.scope))]
 
             if debug:
-                print("psi: ", i, " ", psi[i])
+                print("used var: ", used_val)
+                print("stride: ", factor.stride(factor.scope[val_index]), ", card: ", factor.vals[val_index])
 
-        new_factor.vals = psi[:]
+            psi = []
+            for i in range(len(new_factor.scope)):
+                psi.append(0)
 
-    return new_factor
+                start = 0
+                for k in range(len(factor.scope)):
+                    if used_val[k] == False:
+                        start = k
+                        break
+
+                for j in range(factor.scope[val_index]):
+                    if debug:
+                        print("start: ", start, " stride: ", factor.stride(val_index), " j: ", j)
+                    psi[i] += factor.vals[start + factor.stride(val_index) * j]
+                    used_val[start + factor.stride(val_index) * j] = True
+
+                if debug:
+                    print("psi: ", i, " ", psi[i])
+
+            new_factor.vals = psi[:]
+        #new_factors.append(new_factor)
+        return new_factors
 
 
 #
@@ -268,13 +260,28 @@ def read_model():
 
 def main():
     factors = read_model()
+    new_factors = []
     # loop through factors, choosing random variable to sum out and sending those factors to sum_out
     total_scope = []
     for factor in factors:
         total_scope.append(factor.scope)
     print(total_scope)
+
+    counted = Counter([item for scope in total_scope for item in scope])
+    sorted_x = sorted(counted.items(), key=operator.itemgetter(1))
+    print(sorted_x)
+    for variable in sorted_x:
+        variable_factors = []
+        for factor in factors:
+            print("Variable 0", int(variable[0]))
+            print("Factor Scope", factor.scope)
+            if int(variable[0]) in factor.scope:
+                variable_factors.append(factor)
+        new_factors.append(sum_out(variable_factors, variable[0]))
+
+    f = functools.reduce(Factor.__mul__, new_factors)
     # Compute Z by brute force... BRUUUUTTTTEEEEEEE
-    f = functools.reduce(Factor.__mul__, factors)  # Nice function in Python! Whoot whoot!
+    #f = functools.reduce(Factor.__mul__, factors)  # Nice function in Python! Whoot whoot!
     z = sum(f.vals)
     print("Z = ", z)
     return
