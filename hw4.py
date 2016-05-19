@@ -137,6 +137,16 @@ def sum_out(factor, variable):
     :param variable:
     :return:
     '''
+
+    """
+    I am not sure where you want this yet but here is the code to go through the list of lists
+
+    counted = Counter([item for sublist in my_list for item in sublist])
+
+    ---> then change my_list to the scope list of lists in the code
+
+
+    """
     debug = True
 
     new_vals = [x for x in factor.scope if variable not in x]
