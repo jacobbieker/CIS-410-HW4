@@ -270,19 +270,25 @@ def main():
     sorted_x = sorted(counted.items(), key=operator.itemgetter(1))
     print(sorted_x)
     for variable in sorted_x:
-        variable_factors = []
-        for factor in factors:
-            #print("Variable 0", int(variable[0]))
-            #print("Factor Scope", factor.scope)
-            if int(variable[0]) in factor.scope:
-                variable_factors.append(factor)
-        # new_factors.append(sum_out(variable_factors, variable[0]))
+        factors_subset = [x for x in factors if variable[0] in x.scope]
+        if len(factors_subset) < 2:
+            continue
+        new_factors = [x for x in factors if x not in factors_subset]
+        factored_subset = functools.reduce(Factor.__mul__, factors_subset)
+        if len(factored_subset.scope) > 1:
+            print(factored_subset.scope)
+            new_factors.append(sum_out(factored_subset, variable[0]))
+        else:
+            new_factors.append(factored_subset)
+        if len(new_factors) == 1:
+            break
+        factors = new_factors
 
     # f = functools.reduce(Factor.__mul__, new_factors)
     # Compute Z by brute force... BRUUUUTTTTEEEEEEE
     f = functools.reduce(Factor.__mul__, factors)  # Nice function in Python! Whoot whoot!
-    for variable in sorted_x:
-        f = sum_out(f, variable[0])
+    #for variable in sorted_x:
+     #   f = sum_out(f, variable[0])
     z = sum(f.vals)
     print("Z = ", z)
     return
