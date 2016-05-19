@@ -5,9 +5,13 @@ __author__ = 'Jacob Bieker'
 # Daniel Lowd
 # April 2016
 #
-# Language: Python 2.7.1
+# Language: Python 3.5x
 #
+# Notes from HW4:
 # Worked with Robert Marcy on the implimentation of the alogithm and logic behind __mult__
+#
+# Notes from HW5:
+# (these are the notes)
 #
 # TEMPLATE CODE
 import sys
