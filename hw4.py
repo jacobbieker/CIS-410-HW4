@@ -134,27 +134,27 @@ def sum_out(factor, variable):
     '''
     debug = True
 
-    new_vals = [x for x in factor.vals if x != variable]
+    new_vals = [x for x in factor.scope if x != variable]
     if debug: print("New Vals: ", new_vals)
 
-    new_factor = Factor(factor.scope, new_vals, factor.ranges)
+    new_factor = Factor(new_vals, factor.vals, factor.ranges)
 
     if len(new_vals) > 0:
-        val_index = factor.vals.index(variable)
+        val_index = factor.scope.index(variable)
         if debug: print("Var Index: ", val_index)
 
-        used_val = [False for x in range(len(factor.vals))]
+        used_val = [False for x in range(len(factor.scope))]
 
         if debug:
             print "used var: ", used_val
-            print "stride: ", factor.ranges[val_index], ", card: ", factor.scope[val_index]
+            print "stride: ", factor.stride(factor.scope[val_index]), ", card: ", factor.vals[val_index]
 
         psi = []
-        for i in range(len(new_factor.vals)):
+        for i in range(len(new_factor.scope)):
             psi.append(0)
 
             start = 0
-            for k in range(len(factor.vals)):
+            for k in range(len(factor.scope)):
                 if used_val[k] == False:
                     start = k
                     break
@@ -162,13 +162,13 @@ def sum_out(factor, variable):
             for j in range(len(factor.scope[val_index])):
                 if debug:
                     print "start: ", start, " stride: ", factor.stride(val_index), " j: ", j
-                psi[i] += factor.scope[start + factor.stride(val_index) * j]
+                psi[i] += factor.vals[start + factor.stride(val_index) * j]
                 used_val[start + factor.stride(val_index) * j] = True
 
             if debug:
                 print "psi: ", i, " ", psi[i]
 
-        new_factor.scope = psi[:]
+        new_factor.vals = psi[:]
 
     return new_factor
 
