@@ -148,8 +148,24 @@ def sum_out(factor, variable):
         for i in range(len(new_factor.vals)):
             psi.append(0)
 
-    return 0
+            start = 0
+            for k in range(len(factor.vals)):
+                if used_val[k] == False:
+                    start = k
+                    break
 
+            for j in range(len(factor.scope[val_index])):
+                if debug:
+                    print "start: ", start, " stride: ", factor.stride(val_index), " j: ", j
+                psi[i] += factor.scope[start + factor.stride(val_index) * j]
+                used_val[start + factor.stride(val_index) * j] = True
+
+            if debug:
+                print "psi: ", i, " ", psi[i]
+
+        new_factor.scope = psi[:]
+
+    return new_factor
 
 
 #
