@@ -168,12 +168,10 @@ def sum_out(factor, variable):
                     print("start: ", start, " stride: ", factor.stride(val_index), " j: ", j)
                 psi[i] += factor.vals[start + factor.stride(val_index) * j]
                 used_val[start + factor.stride(val_index) * j] = True
-
             if debug:
                 print("psi: ", i, " ", psi[i])
 
         new_factor.vals = psi[:]
-    #new_factors.append(new_factor)
     return new_factor
 
 
