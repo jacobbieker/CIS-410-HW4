@@ -139,7 +139,6 @@ def sum_out(factor, variable):
     :return:
     '''
     debug = True
-    new_factors = []
     new_vals = [x for x in factor.scope if x != variable]
     if debug: print("New Vals: ", new_vals)
 
@@ -164,8 +163,7 @@ def sum_out(factor, variable):
                 if used_val[k] == False:
                     start = k
                     break
-
-            for j in range(factor.scope[val_index]):
+            for j in range(factor.ranges[factor.scope[val_index]]):
                 if debug:
                     print("start: ", start, " stride: ", factor.stride(val_index), " j: ", j)
                 psi[i] += factor.vals[start + factor.stride(val_index) * j]
@@ -275,7 +273,9 @@ def main():
             continue
         new_factors = [x for x in factors if x not in factors_subset]
         factored_subset = functools.reduce(Factor.__mul__, factors_subset)
-        if len(factored_subset.scope) > 1:
+        if len(factored_subset.scope) == 1:
+            new_factors.append(Factor([], factored_subset.vals, []))
+        elif len(factored_subset.scope) > 1:
             print(factored_subset.scope)
             new_factors.append(sum_out(factored_subset, variable[0]))
         else:
