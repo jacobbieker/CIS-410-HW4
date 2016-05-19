@@ -138,7 +138,7 @@ def sum_out(factor, variable):
     '''
     debug = True
 
-    new_vals = [x for x in factor.scope if x != variable]
+    new_vals = [x for x in factor.scope if variable not in x]
     if debug: print("New Vals: ", new_vals)
 
     new_factor = Factor(new_vals, factor.vals, factor.ranges)
@@ -150,8 +150,8 @@ def sum_out(factor, variable):
         used_val = [False for x in range(len(factor.scope))]
 
         if debug:
-            print "used var: ", used_val
-            print "stride: ", factor.stride(factor.scope[val_index]), ", card: ", factor.vals[val_index]
+            print("used var: ", used_val)
+            print("stride: ", factor.stride(factor.scope[val_index]), ", card: ", factor.vals[val_index])
 
         psi = []
         for i in range(len(new_factor.scope)):
@@ -165,12 +165,12 @@ def sum_out(factor, variable):
 
             for j in range(len(factor.scope[val_index])):
                 if debug:
-                    print "start: ", start, " stride: ", factor.stride(val_index), " j: ", j
+                    print("start: ", start, " stride: ", factor.stride(val_index), " j: ", j)
                 psi[i] += factor.vals[start + factor.stride(val_index) * j]
                 used_val[start + factor.stride(val_index) * j] = True
 
             if debug:
-                print "psi: ", i, " ", psi[i]
+                print("psi: ", i, " ", psi[i])
 
         new_factor.vals = psi[:]
 
@@ -246,7 +246,7 @@ def read_model():
     # print "Ranges: ",var_ranges
     # print "var_dict: ", var_dict
     # print "factor_ranges: ", factor_ranges
-    # print "Scopes: ",factor_scopes
+    print("Scopes: ", factor_scopes)
     # print "Values: ",factor_vals
     return [Factor(s, v, r) for (s, v, r) in zip(factor_scopes, factor_vals, factor_ranges)]
 
