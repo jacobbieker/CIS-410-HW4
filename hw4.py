@@ -117,6 +117,41 @@ class Factor(dict):
         return self * other
 
 
+def sum_out(factor, variable):
+    '''
+    Choose a random variable from all of the remaining variables that can be summed out
+    Collect all the factors that have this random variable and multiply them together
+    Sum out the chosen random variable from the resulting factor by summing all the variations of the chosen random variable for each combination of other random variables
+    Repeat
+    :param factor:
+    :param variable:
+    :return:
+    '''
+    debug = True
+
+    new_vals = [x for x in factor.vals if x != variable]
+    if debug: print("New Vals: ", new_vals)
+
+    new_factor = Factor(factor.scope, new_vals, factor.ranges)
+
+    if len(new_vals) > 0:
+        val_index = factor.vals.index(variable)
+        if debug: print("Var Index: ", val_index)
+
+        used_val = [False for x in range(len(factor.vals))]
+
+        if debug:
+            print "used var: ", used_val
+            print "stride: ", factor.ranges[val_index], ", card: ", factor.scope[val_index]
+
+        psi = []
+        for i in range(len(new_factor.vals)):
+            psi.append(0)
+
+    return 0
+
+
+
 #
 # READ IN MODEL FILE
 #
