@@ -20,7 +20,7 @@ import functools
 
 
 #
-# FACTOR CLASS -- EDIT HERE!
+# FACTOR CLASS
 #
 
 class Factor(dict):
