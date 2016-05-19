@@ -20,6 +20,11 @@ import functools
 #
 
 class Factor(dict):
+    """
+    Ranges = cardinality
+    vals = phi
+    scope =
+    """
     def __init__(self, scope_, vals_, range_):
         self.scope = scope_
         self.vals = vals_
