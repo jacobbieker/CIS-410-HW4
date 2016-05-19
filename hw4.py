@@ -139,7 +139,6 @@ def sum_out(factor, variable):
     :return:
     '''
     debug = True
-    print(factor)
     new_factors = []
     new_vals = [x for x in factor.scope if x != variable]
     if debug: print("New Vals: ", new_vals)
